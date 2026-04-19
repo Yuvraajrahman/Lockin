@@ -1,0 +1,56 @@
+name: iLockin
+options:
+  bundleIdPrefix: com.rogue
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  developmentLanguage: en
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    ENABLE_HARDENED_RUNTIME: YES
+    CODE_SIGN_STYLE: Automatic
+    CODE_SIGN_ENTITLEMENTS: iLockin/iLockin.entitlements
+    DEAD_CODE_STRIPPING: YES
+    SWIFT_STRICT_CONCURRENCY: minimal
+
+targets:
+  iLockin:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: iLockin
+        excludes:
+          - "iLockin.entitlements"
+    resources:
+      - path: iLockin/Resources
+    info:
+      path: iLockin/Info.plist
+      properties:
+        CFBundleDisplayName: iLockin
+        CFBundleShortVersionString: "0.1"
+        CFBundleVersion: "1"
+        LSMinimumSystemVersion: "14.0"
+        LSApplicationCategoryType: public.app-category.productivity
+        NSHumanReadableCopyright: "© 2026 Rogue. iLockin v0.1"
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: false
+          NSExceptionDomains:
+            api.aladhan.com:
+              NSIncludesSubdomains: true
+              NSExceptionAllowsInsecureHTTPLoads: false
+            api.github.com:
+              NSIncludesSubdomains: true
+              NSExceptionAllowsInsecureHTTPLoads: false
+        LSUIElement: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.rogue.ilockin
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: ilockinOrange
+        ENABLE_PREVIEWS: YES
+        DEVELOPMENT_TEAM: ""
+        GENERATE_INFOPLIST_FILE: NO
+        COMBINE_HIDPI_IMAGES: YES

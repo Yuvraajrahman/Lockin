@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "description": "Initial template loaded on first launch (also mirrored in DefaultSchedule.template). Times are minutes from midnight.",
+  "blocks": [
+    { "title": "Wake + Coffee",                 "startMinute": 300,  "durationMinutes": 30,  "category": "wake" },
+    { "title": "Morning Home Workout",          "startMinute": 330,  "durationMinutes": 30,  "category": "workout" },
+    { "title": "Quran + Pronunciation",         "startMinute": 360,  "durationMinutes": 45,  "category": "reading" },
+    { "title": "Morning Touch Typing",          "startMinute": 405,  "durationMinutes": 20,  "category": "typing" },
+    { "title": "Morning Programming Practice",  "startMinute": 430,  "durationMinutes": 45,  "category": "programming" },
+    { "title": "Deep Work",                     "startMinute": 480,  "durationMinutes": 240, "category": "programming" },
+    { "title": "Evening Touch Typing",          "startMinute": 1260, "durationMinutes": 20,  "category": "typing" },
+    { "title": "Evening Programming Practice",  "startMinute": 1280, "durationMinutes": 45,  "category": "programming" },
+    { "title": "Reading + Light Stretch",       "startMinute": 1350, "durationMinutes": 60,  "category": "reading" },
+    { "title": "Sleep",                         "startMinute": 1410, "durationMinutes": 30,  "category": "sleep" }
+  ],
+  "note": "Maghrib walk (2h) and Isha night-study (1h) are inserted automatically after prayer times are fetched."
+}

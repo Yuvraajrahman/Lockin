@@ -1,0 +1,32 @@
+## Build output
+build/
+DerivedData/
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+*.xcuserstate
+*.xccheckout
+*.moved-aside
+
+## Swift Package Manager
+.build/
+.swiftpm/
+Packages/
+Package.pins
+Package.resolved
+*.xcodeproj/project.xcworkspace/xcuserdata
+
+## macOS
+.DS_Store
+
+## Carthage
+Carthage/Build/
+
+## fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+## Optional: keep generated project out of VCS (re-generate with setup.sh)
+iLockin.xcodeproj/
