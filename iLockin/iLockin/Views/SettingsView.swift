@@ -9,6 +9,7 @@ struct SettingsView: View {
     @EnvironmentObject private var prayerVM: PrayerViewModel
     @EnvironmentObject private var githubVM: GitHubViewModel
     @EnvironmentObject private var dashboardVM: DashboardViewModel
+    @EnvironmentObject private var alarmSession: AlarmSession
 
     @Query private var allSettings: [AppSettings]
     @Query(sort: \DailyBlock.startMinute) private var blocks: [DailyBlock]
@@ -33,6 +34,7 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 18) {
                     githubSection
                     prayerSection
+                    notificationsSection
                     autoLaunchSection
                     scheduleSection
                     resetSection
@@ -171,11 +173,61 @@ struct SettingsView: View {
                         try? context.save()
                         Task {
                             await prayerVM.refreshIfNeeded(context: context, settings: settings, force: true)
+                            await rescheduleNotificationsFromSettings()
                             await flash("Prayer times refreshed")
                         }
                     }
                     Spacer()
                 }
+            }
+        }
+    }
+
+    // MARK: - Notifications
+
+    private var notificationsSection: some View {
+        ILCard {
+            VStack(alignment: .leading, spacing: 12) {
+                ILSectionTitle(text: "Reminders", glyph: "bell.badge.fill")
+                Toggle(isOn: Binding(
+                    get: { settings.fajrAlarmEnabled },
+                    set: {
+                        settings.fajrAlarmEnabled = $0
+                        try? context.save()
+                        Task { await rescheduleNotificationsFromSettings() }
+                    }
+                )) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Fajr alarm")
+                            .font(Theme.displayFont(13, weight: .heavy))
+                            .foregroundStyle(Theme.textPrimary)
+                        Text("Notification at Fajr with default alert sound; open the app and dismiss the full-screen alarm.")
+                            .font(Theme.displayFont(11, weight: .heavy))
+                            .foregroundStyle(Theme.textSecondary)
+                    }
+                }
+                .toggleStyle(.switch)
+                .tint(Theme.orange)
+
+                Toggle(isOn: Binding(
+                    get: { settings.taskNotificationsEnabled },
+                    set: {
+                        settings.taskNotificationsEnabled = $0
+                        try? context.save()
+                        Task { await rescheduleNotificationsFromSettings() }
+                    }
+                )) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Task start reminders")
+                            .font(Theme.displayFont(13, weight: .heavy))
+                            .foregroundStyle(Theme.textPrimary)
+                        Text("Daily notification at each schedule block start (blocks you edit here; auto-generated prayer rows are skipped).")
+                            .font(Theme.displayFont(11, weight: .heavy))
+                            .foregroundStyle(Theme.textSecondary)
+                    }
+                }
+                .toggleStyle(.switch)
+                .tint(Theme.orange)
             }
         }
     }
@@ -294,6 +346,18 @@ struct SettingsView: View {
         saveStatus = message
         try? await Task.sleep(nanoseconds: 1_500_000_000)
         if saveStatus == message { saveStatus = nil }
+    }
+
+    @MainActor
+    private func rescheduleNotificationsFromSettings() async {
+        let allowed = await alarmSession.requestNotificationAuthorizationIfNeeded()
+        await ScheduleNotificationService.reschedule(
+            context: context,
+            settings: settings,
+            blocks: blocks,
+            prayerTimesToday: prayerVM.todayTimings,
+            authorizationAllowed: allowed
+        )
     }
 }
 

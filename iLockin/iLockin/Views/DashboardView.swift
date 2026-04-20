@@ -8,8 +8,10 @@ struct DashboardView: View {
     @EnvironmentObject private var dashboardVM: DashboardViewModel
     @EnvironmentObject private var prayerVM: PrayerViewModel
     @EnvironmentObject private var githubVM: GitHubViewModel
+    @EnvironmentObject private var alarmSession: AlarmSession
 
     @Query private var allSettings: [AppSettings]
+    @Query(sort: \DailyBlock.startMinute) private var blocks: [DailyBlock]
     @Query(sort: \Streak.key) private var streaks: [Streak]
 
     @State private var sheet: ActiveSheet?
@@ -43,14 +45,66 @@ struct DashboardView: View {
         .frame(minWidth: 1280, minHeight: 800)
         .background(Theme.black.ignoresSafeArea())
         .iLockinBackground()
+        .overlay {
+            if alarmSession.isFajrAlarmShowing {
+                FajrAlarmOverlay(
+                    onDismiss: { alarmSession.dismissFajrAlarm(for: dashboardVM.todayKey) }
+                )
+            }
+        }
         .task {
             dashboardVM.seedIfNeeded(context: context, settings: settings)
             await prayerVM.refreshIfNeeded(context: context, settings: settings)
             await githubVM.refreshIfNeeded(context: context, settings: settings)
+            await rescheduleNotifications()
+            evaluateFajrAlarmPresentation()
+        }
+        .onChange(of: sheet) { _, newValue in
+            if newValue == nil {
+                Task { await rescheduleNotifications() }
+            }
+        }
+        .onChange(of: blockScheduleSignature) { _, _ in
+            Task { await rescheduleNotifications() }
+        }
+        .onChange(of: dashboardVM.minuteOfDay) { _, _ in
+            evaluateFajrAlarmPresentation()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .iLockinCheckFajrAlarm)) { _ in
+            evaluateFajrAlarmPresentation()
         }
         .sheet(item: $sheet) { which in
             sheetContent(for: which)
         }
+    }
+
+    private var blockScheduleSignature: String {
+        blocks.map { "\($0.id.uuidString)|\($0.startMinute)|\($0.title)" }.sorted().joined(separator: ";")
+    }
+
+    private func rescheduleNotifications() async {
+        let allowed = await alarmSession.requestNotificationAuthorizationIfNeeded()
+        await ScheduleNotificationService.reschedule(
+            context: context,
+            settings: settings,
+            blocks: blocks,
+            prayerTimesToday: prayerVM.todayTimings,
+            authorizationAllowed: allowed
+        )
+    }
+
+    private func evaluateFajrAlarmPresentation() {
+        guard settings.fajrAlarmEnabled else { return }
+        guard !alarmSession.isFajrAlarmShowing else { return }
+        guard let fm = PrayerTimes.minutes(from: prayerVM.todayTimings?.fajr ?? ""),
+              prayerVM.todayTimings?.dayKey == dashboardVM.todayKey else { return }
+        guard alarmSession.shouldOfferFajrAlarmOnLaunch(
+            fajrMinute: fm,
+            nowMinute: dashboardVM.minuteOfDay,
+            todayKey: dashboardVM.todayKey,
+            prayerDayKey: prayerVM.todayTimings?.dayKey
+        ) else { return }
+        alarmSession.presentFajrAlarm()
     }
 
     // MARK: - Header
@@ -172,6 +226,32 @@ struct DashboardView: View {
         let f = DateFormatter()
         f.dateFormat = "HH:mm:ss"
         return f.string(from: d)
+    }
+}
+
+private struct FajrAlarmOverlay: View {
+    var onDismiss: () -> Void
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.94).ignoresSafeArea()
+            VStack(spacing: 28) {
+                Image(systemName: "sunrise.fill")
+                    .font(.system(size: 56, weight: .black))
+                    .foregroundStyle(Theme.orange)
+                Text("FAJR")
+                    .font(Theme.displayFont(44, weight: .black))
+                    .tracking(6)
+                    .foregroundStyle(Theme.textPrimary)
+                Text("Dismiss to stop the alarm.")
+                    .font(Theme.displayFont(13, weight: .heavy))
+                    .foregroundStyle(Theme.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: 420)
+                ILPrimaryButton(title: "Dismiss Alarm", icon: "checkmark.circle.fill", action: onDismiss)
+            }
+            .padding(48)
+        }
     }
 }
 

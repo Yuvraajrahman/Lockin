@@ -3,6 +3,8 @@ import SwiftData
 
 @main
 struct iLockinApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+
     /// Single SwiftData container shared across the app.
     let container: ModelContainer
 
@@ -45,6 +47,7 @@ struct iLockinApp: App {
                 .environmentObject(dashboardVM)
                 .environmentObject(prayerVM)
                 .environmentObject(githubVM)
+                .environmentObject(AlarmSession.shared)
                 .modelContainer(container)
                 .frame(minWidth: 1280, minHeight: 800)
         }

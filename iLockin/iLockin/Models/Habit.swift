@@ -78,4 +78,11 @@ enum DayKey {
         let c = calendar.dateComponents([.year, .month, .day], from: p)
         return (c.year ?? 0) * 10_000 + (c.month ?? 0) * 100 + (c.day ?? 0)
     }
+
+    static func next(_ key: Int, calendar: Calendar = .current) -> Int {
+        guard let d = date(from: key, calendar: calendar),
+              let n = calendar.date(byAdding: .day, value: 1, to: d) else { return key }
+        let c = calendar.dateComponents([.year, .month, .day], from: n)
+        return (c.year ?? 0) * 10_000 + (c.month ?? 0) * 100 + (c.day ?? 0)
+    }
 }

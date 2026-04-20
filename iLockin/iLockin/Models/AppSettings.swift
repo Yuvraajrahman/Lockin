@@ -22,6 +22,10 @@ final class AppSettings {
     var walkBlockMinutes: Int
     /// Night-study-block duration in minutes (after Isha).
     var nightStudyMinutes: Int
+    /// Local notification + in-app alarm at Fajr (system default alert sound).
+    var fajrAlarmEnabled: Bool
+    /// Daily repeating reminders at each schedule block start (non-auto-generated blocks only).
+    var taskNotificationsEnabled: Bool
 
     init(
         prayerCity: String = "Dhaka",
@@ -33,7 +37,9 @@ final class AppSettings {
         lastPrayerFetchDay: Int = 0,
         lastGithubFetchAt: Date? = nil,
         walkBlockMinutes: Int = 120,
-        nightStudyMinutes: Int = 60
+        nightStudyMinutes: Int = 60,
+        fajrAlarmEnabled: Bool = true,
+        taskNotificationsEnabled: Bool = true
     ) {
         self.prayerCity = prayerCity
         self.prayerCountry = prayerCountry
@@ -45,5 +51,7 @@ final class AppSettings {
         self.lastGithubFetchAt = lastGithubFetchAt
         self.walkBlockMinutes = walkBlockMinutes
         self.nightStudyMinutes = nightStudyMinutes
+        self.fajrAlarmEnabled = fajrAlarmEnabled
+        self.taskNotificationsEnabled = taskNotificationsEnabled
     }
 }
