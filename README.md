@@ -10,10 +10,14 @@
 
 ## Download
 
-Installers are on **[GitHub Releases](https://github.com/Yuvraajrahman/Lockin/releases)**:
+### Get iLockin for macOS
 
-- **`iLockin-*-macos-universal.dmg`** — open the disk image, drag **iLockin** into **Applications**.
-- **`iLockin-*-macos-universal.zip`** — unzip, move **iLockin.app** to **Applications** (or run in place).
+**Latest release:** [iLockin 0.1](https://github.com/Yuvraajrahman/Lockin/releases/tag/v0.1)
+
+| Download | How to install |
+| --- | --- |
+| **[Download DMG installer](https://github.com/Yuvraajrahman/Lockin/releases/download/v0.1/iLockin-0.1-macos-universal.dmg)** | Open the disk image, then drag **iLockin** into **Applications**. |
+| **[Download ZIP app](https://github.com/Yuvraajrahman/Lockin/releases/download/v0.1/iLockin-0.1-macos-universal.zip)** | Unzip it, then move **iLockin.app** to **Applications** or run it in place. |
 
 CI builds are **ad-hoc signed**; the first launch may require **System Settings → Privacy & Security → Open Anyway**, or **Control-click → Open**. See **[RELEASES.md](RELEASES.md)** for details and maintainer steps.
 
