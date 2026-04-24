@@ -190,9 +190,9 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 12) {
                 ILSectionTitle(text: "Reminders", glyph: "bell.badge.fill")
                 Toggle(isOn: Binding(
-                    get: { settings.fajrAlarmEnabled },
+                    get: { settings.isFajrAlarmEnabled },
                     set: {
-                        settings.fajrAlarmEnabled = $0
+                        settings.isFajrAlarmEnabled = $0
                         try? context.save()
                         Task { await rescheduleNotificationsFromSettings() }
                     }
@@ -210,9 +210,9 @@ struct SettingsView: View {
                 .tint(Theme.orange)
 
                 Toggle(isOn: Binding(
-                    get: { settings.taskNotificationsEnabled },
+                    get: { settings.areTaskNotificationsEnabled },
                     set: {
-                        settings.taskNotificationsEnabled = $0
+                        settings.areTaskNotificationsEnabled = $0
                         try? context.save()
                         Task { await rescheduleNotificationsFromSettings() }
                     }

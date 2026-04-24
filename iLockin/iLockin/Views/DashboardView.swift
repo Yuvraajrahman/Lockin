@@ -94,7 +94,7 @@ struct DashboardView: View {
     }
 
     private func evaluateFajrAlarmPresentation() {
-        guard settings.fajrAlarmEnabled else { return }
+        guard settings.isFajrAlarmEnabled else { return }
         guard !alarmSession.isFajrAlarmShowing else { return }
         guard let fm = PrayerTimes.minutes(from: prayerVM.todayTimings?.fajr ?? ""),
               prayerVM.todayTimings?.dayKey == dashboardVM.todayKey else { return }

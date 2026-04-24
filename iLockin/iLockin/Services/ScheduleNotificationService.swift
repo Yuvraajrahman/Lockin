@@ -29,11 +29,11 @@ enum ScheduleNotificationService {
         let now = Date.now
         let todayKey = DayKey.today(now, calendar: calendar)
 
-        if settings.fajrAlarmEnabled, let pt = prayerTimesToday, pt.dayKey == todayKey {
+        if settings.isFajrAlarmEnabled, let pt = prayerTimesToday, pt.dayKey == todayKey {
             await scheduleFajrAnchors(pt: pt, settings: settings, calendar: calendar, now: now)
         }
 
-        if settings.taskNotificationsEnabled {
+        if settings.areTaskNotificationsEnabled {
             scheduleTaskReminders(blocks: blocks, calendar: calendar)
         }
     }

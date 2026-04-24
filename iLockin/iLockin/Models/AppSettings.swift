@@ -23,9 +23,19 @@ final class AppSettings {
     /// Night-study-block duration in minutes (after Isha).
     var nightStudyMinutes: Int
     /// Local notification + in-app alarm at Fajr (system default alert sound).
-    var fajrAlarmEnabled: Bool
+    var fajrAlarmEnabled: Bool?
     /// Daily repeating reminders at each schedule block start (non-auto-generated blocks only).
-    var taskNotificationsEnabled: Bool
+    var taskNotificationsEnabled: Bool?
+
+    var isFajrAlarmEnabled: Bool {
+        get { fajrAlarmEnabled ?? true }
+        set { fajrAlarmEnabled = newValue }
+    }
+
+    var areTaskNotificationsEnabled: Bool {
+        get { taskNotificationsEnabled ?? true }
+        set { taskNotificationsEnabled = newValue }
+    }
 
     init(
         prayerCity: String = "Dhaka",
