@@ -1,0 +1,2 @@
+# Release artifacts (built locally or in CI; uploaded to GitHub Releases, not committed)
+dist/
